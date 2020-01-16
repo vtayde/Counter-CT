@@ -1,0 +1,175 @@
+<html>
+  <head>
+      <meta name="author" content="Varsha Dipak Tayde">
+  </head>
+  <body>
+    <style>
+      .main {
+        width: 100%;
+      }
+      #inputUI {
+        margin: 2rem auto;
+        width:50%;
+      }
+      .formInput {
+        padding: 0.5rem;
+        margin:0.5rem;
+      }
+      
+      .display {
+        display: flex;
+      }
+      .btn {
+        margin: 0.5rem;
+        padding: 0.5rem;
+        background-color: green;
+        color: white;
+        border:1px solid green;
+      }
+      .container {
+        width: 80%;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+      }
+
+      .CounterUI {
+        width: 80%;
+        flex: 1;
+      }
+      #table1{
+        border:1px solid grey;
+      }
+      #table2{
+        border:1px solid grey;
+      }
+    </style>
+    <div class="main">
+      <div id="inputUI">
+        <div class="formInput">
+          Time Duration: <input type="number" id="time-duration" placeholder="Minutes"/>
+        </div>
+        <div class="formInput">
+          Time Interval: <input type="number" id="time-interval" value="timeInterval" placeholder="Seconds"/>
+        </div>
+          <div>
+            <button class="btn" onclick="onStart()">Start</button>
+          </div>
+      </div>
+      <div id="CounterUI">  
+    <div class="container">
+      <button class="btn" onclick="onReset()">Reset</button>
+    </div>
+      <div class="container" >
+        <div class="counterUI">
+          <div><label id="minutesUp" value="">00</label>:<label id="secondsUp">00</label></div>
+          <div>
+            <button  class="btn" onclick="onPause('up')">Pause/Resume</button>
+          </div>
+          <div>
+            <button  class="btn" onclick="onLap('one')">LAP</button>
+          </div>
+          <div>
+            <label>Lap History</label>
+            <table id="table1">
+                <tr style="border: 1px solid grey;">
+                    <td>Previos Lap</td>
+                    <td>Current time</td>
+                    <td>Lap Time</td>
+                  </tr>
+            </table>
+          </div>
+        </div>
+        <div class="counterUI">
+            <div><label id="minutesDown">00</label>:<label id="secondsDown">00</label></div>
+            <div>
+              <button  class="btn" onclick="onPause('two')">Pause/Resume</button>
+            </div>
+            <div>
+              <button  class="btn"  onclick="onLap()">LAP</button>
+            </div>
+            <div>
+              <label>Lap History</label>
+              <table id="table2">
+                <tr style="border: 1px solid grey;">
+                  <td>Previos Lap</td>
+                  <td>Current time</td>
+                  <td>Lap Time</td>
+                </tr>
+              </table>
+            </div>
+          </div>
+      </div>
+    </div>
+    </div>
+    <script>
+        window.onload = () => {
+            document.getElementById('CounterUI').style.display= 'none'
+            document.getElementById('inputUI').style.display= 'display'
+        }
+        let CounterUP = {
+            timeInterval: 1,
+            timePeriod: 10,
+            minutes: null,
+            seconds: null,
+            minutesId: "minutesUp",
+            secondsId: "secondsUp",
+            pause: false
+        }
+        let CounterDown = {
+            timeInterval: 1,
+            timePeriod: 0,
+            minutes: null,
+            seconds: null,
+            minutesId: "minutesDown",
+            secondsId: "secondsDown",
+            pause: false
+        }
+        class Counter {
+            constructor(props) {
+                this.props = props
+            }
+            setPauseNResume = () => {
+                this.props.pause = !this.props.pause
+            }
+            startCounter = (val) => {
+                    setInterval(() => {
+                        if(!this.props.pause) {
+                            if(val) {
+                                this.props.timePeriod = (this.props.timePeriod*60 -this.props.timeInterval)/60
+                                this.props.minutes = parseInt((this.props.timePeriod*60 -this.props.timeInterval)/60)
+                                this.props.seconds = ((this.props.timePeriod*60 -this.props.timeInterval)%60)
+                            }else {
+                                this.props.timePeriod = (this.props.timePeriod*60 +this.props.timeInterval)/60
+                                this.props.minutes = parseInt((this.props.timePeriod*60 +this.props.timeInterval)/60)
+                                this.props.seconds = ((this.props.timePeriod*60 +this.props.timeInterval)%60)
+                            }
+                            document.getElementById(this.props.minutesId).innerHTML = this.props.minutes
+                            document.getElementById(this.props.secondsId).innerHTML = this.props.seconds
+                        }
+                    }, this.props.timeInterval*1000)
+                }
+        }
+        let objUp = new Counter(CounterUP)
+        let objDown = new Counter(CounterDown)
+        onStart = () => {
+            debugger
+            document.getElementById('inputUI').style.display= 'none'
+            document.getElementById('CounterUI').style.display= 'block'
+            objDown.startCounter(false)
+            objUp.startCounter(true)
+        }
+        onPause = (val) => {
+            if(val === 'up') {
+                objUp.setPauseNResume()
+            }else {
+                objDown.setPauseNResume()
+            }
+        }
+        onReset = () => {
+            CounterUP.timePeriod = 10
+            CounterDown.timePeriod = 0
+        }
+    </script>
+  </body>
+</html>

@@ -1,0 +1,180 @@
+<html>
+  <head>
+      <meta name="author" content="Varsha Dipak Tayde">
+  </head>
+  <body>
+    <style>
+      .main {
+        width: 100%;
+      }
+      #inputUI {
+        margin: 2rem auto;
+        width:50%;
+      }
+      .formInput {
+        padding: 0.5rem;
+        margin:0.5rem;
+      }
+      
+      .display {
+        display: flex;
+      }
+      .btn {
+        margin: 0.5rem;
+        padding: 0.5rem;
+        background-color: green;
+        color: white;
+        border:1px solid green;
+      }
+      .container {
+        width: 80%;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+      }
+
+      .CounterUI {
+        width: 80%;
+        flex: 1;
+      }
+      #table1{
+        border:1px solid grey;
+      }
+      #table2{
+        border:1px solid grey;
+      }
+    </style>
+    <div class="main">
+      <div id="inputUI">
+        <div class="formInput">
+          Time Duration: <input type="number" id="time-duration" placeholder="Minutes"/>
+        </div>
+        <div class="formInput">
+          Time Interval: <input type="number" id="time-interval" value="timeInterval" placeholder="Seconds"/>
+        </div>
+          <div>
+            <button class="btn" onclick="onStart()">Start</button>
+          </div>
+      </div>
+      <div id="CounterUI">  
+    <div class="container">
+      <button class="btn" onclick="reset()">Reset</button>
+    </div>
+      <div class="container" >
+        <div class="counterUI">
+          <div><label id="minutes">00</label>:<label id="seconds">00</label></div>
+          <div>
+            <button  class="btn" onclick="onPause('one')">Pause/Resume</button>
+          </div>
+          <div>
+            <button  class="btn" onclick="onLap('one')">LAP</button>
+          </div>
+          <div>
+            <label>Lap History</label>
+            <table id="table1">
+                <tr style="border: 1px solid grey;">
+                    <td>Previos Lap</td>
+                    <td>Current time</td>
+                    <td>Lap Time</td>
+                  </tr>
+            </table>
+          </div>
+        </div>
+        <div class="counterUI">
+            <div><label id="minutes2">00</label>:<label id="seconds2">00</label></div>
+            <div>
+              <button  class="btn" onclick="onPause('two')">Pause/Resume</button>
+            </div>
+            <div>
+              <button  class="btn"  onclick="onLap()">LAP</button>
+            </div>
+            <div>
+              <label>Lap History</label>
+              <table id="table2">
+                <tr style="border: 1px solid grey;">
+                  <td>Previos Lap</td>
+                  <td>Current time</td>
+                  <td>Lap Time</td>
+                </tr>
+              </table>
+            </div>
+          </div>
+      </div>
+    </div>
+    </div>
+    <script>
+      var counter1 = 0, counter2 = 0,timeInterval=0, timeDuration = 0;
+      let counter1Flag = counter2Flag = false ;
+      let prevLap= null, prevCounter = 0;
+      let prevLap2= null, prevCounter2 = 0;
+      var minutesLabel = document.getElementById("minutes");
+var secondsLabel = document.getElementById("seconds");
+var minutesLabel2 = document.getElementById("minutes2");
+var secondsLabel2 = document.getElementById("seconds2");
+      window.onload = () =>{
+        document.getElementById("CounterUI").style.display = "none";
+      }
+      onStart=() => {
+        document.getElementById("CounterUI").style.display = "block";
+        document.getElementById("inputUI").style.display = "none";
+        timeInterval = document.getElementById('time-interval').value;
+        timeDuration = document.getElementById('time-duration').value
+        prevLap = '00:00';
+        prevCounter = 0;
+        prevLap2 = `${timeDuration}:00`;
+        prevCounter2 = timeDuration*60;
+        counter1 = 0;
+        counter2 =timeDuration*60;
+        setInterval(()=>{
+          if(!counter1Flag) {
+          counter1++;
+          secondsLabel.innerHTML = (counter1 % 60);
+          minutesLabel.innerHTML = (parseInt(counter1 / 60));
+          }
+        }, timeInterval*1000)
+        setInterval(()=>{
+          if(!counter2Flag) {
+          counter2--;
+          secondsLabel2.innerHTML = (counter2 % 60);
+          minutesLabel2.innerHTML = (parseInt(counter2 / 60));
+          }
+        }, timeInterval*1000)
+      }
+      reset = () => {
+        counter1 = 0;
+        counter2 = timeDuration*60;
+      }
+      onPause = (counter) => {
+        if(counter === "one") {
+          counter1Flag = !counter1Flag;
+        } else {
+          counter2Flag = !counter2Flag;
+        }
+      }
+      onLap = (val) => {
+          let row = document.createElement('tr');
+          let td = document.createElement('td');
+          let td2 = document.createElement('td');
+          let td3 = document.createElement('td');
+        if(val == "one") {
+          // td.value= prevLap;
+          let currentState = `${(parseInt(counter1 / 60))}:${(counter1 % 60)}`
+          row.appendChild(td).innerHTML = prevLap;
+          row.appendChild(td2).innerHTML = currentState;
+          row.appendChild(td3).innerHTML = counter1 - prevCounter;
+          prevLap = currentState;
+          prevCounter = counter1;
+          document.getElementById('table1').appendChild(row);
+        } else {
+          let currentState = `${(parseInt(counter2 / 60))}:${(counter2 % 60)}`
+          row.appendChild(td).innerHTML = prevLap2;
+          row.appendChild(td2).innerHTML = currentState;
+          row.appendChild(td3).innerHTML = prevCounter2-counter2;
+          prevLap2 = currentState;
+          prevCounter2 = counter2;
+          document.getElementById('table2').appendChild(row);
+        }
+      }
+    </script>
+  </body>
+</html>
